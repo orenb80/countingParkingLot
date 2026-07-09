@@ -227,7 +227,7 @@ export function CameraTestPage() {
             {pinging ? "Pinging…" : "Ping Camera"}
           </button>
 
-          {status !== "connected" ? (
+          {status !== "connected" && status !== "connecting" ? (
             <button
               onClick={handleConnect}
               disabled={!form.ip || !form.password}

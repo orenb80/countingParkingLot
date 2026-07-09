@@ -3,15 +3,19 @@ import { LotCard } from "./components/LotCard";
 import { EventFeed } from "./components/EventFeed";
 import { LotModal } from "./components/LotModal";
 import { AddLotModal } from "./components/AddLotModal";
+import { CameraTestPage } from "./pages/CameraTestPage";
 import { useWebSocket } from "./hooks/useWebSocket";
 import { api } from "./services/api";
 import type { ParkingLot, WsVehicleEvent, WsInitialState, VehicleEvent } from "./types";
+
+type AppPage = "dashboard" | "camera-test";
 
 interface FeedItem extends VehicleEvent {
   lot_name: string;
 }
 
 export default function App() {
+  const [page, setPage] = useState<AppPage>("dashboard");
   const [lots, setLots] = useState<ParkingLot[]>([]);
   const [feed, setFeed] = useState<FeedItem[]>([]);
   const [flashLots, setFlashLots] = useState<Set<number>>(new Set());
@@ -100,17 +104,29 @@ export default function App() {
             <div style={{ width: 8, height: 8, borderRadius: "50%", background: connected ? "#22c55e" : "#ef4444" }} />
             <span style={{ fontSize: 12, color: "#64748b" }}>{connected ? "Live" : "Connecting"}</span>
           </div>
-          <button
-            onClick={() => setShowAddLot(true)}
-            style={{ padding: "8px 18px", borderRadius: 8, border: "1px solid #3b82f6", color: "#3b82f6", background: "transparent", cursor: "pointer", fontWeight: 600 }}
-          >
-            + Add Lot
-          </button>
+          {/* Nav tabs */}
+          <div style={{ display: "flex", gap: 4, background: "#1e293b", borderRadius: 8, padding: 4 }}>
+            {([["dashboard", "Dashboard"], ["camera-test", "Camera Test"]] as [AppPage, string][]).map(([p, label]) => (
+              <button key={p} onClick={() => setPage(p)} style={{ padding: "6px 16px", borderRadius: 6, border: "none", cursor: "pointer", fontWeight: 500, fontSize: 13, background: page === p ? "#3b82f6" : "transparent", color: page === p ? "white" : "#94a3b8" }}>
+                {label}
+              </button>
+            ))}
+          </div>
+
+          {page === "dashboard" && (
+            <button
+              onClick={() => setShowAddLot(true)}
+              style={{ padding: "8px 18px", borderRadius: 8, border: "1px solid #3b82f6", color: "#3b82f6", background: "transparent", cursor: "pointer", fontWeight: 600 }}
+            >
+              + Add Lot
+            </button>
+          )}
         </div>
       </header>
 
       {/* Main */}
-      <main style={{ flex: 1, display: "grid", gridTemplateColumns: "1fr 360px", gap: 0 }}>
+      {page === "camera-test" && <CameraTestPage />}
+      <main style={{ flex: 1, display: page === "dashboard" ? "grid" : "none", gridTemplateColumns: "1fr 360px", gap: 0 }}>
         {/* Lot grid */}
         <div style={{ padding: 32, overflowY: "auto" }}>
           {lots.length === 0 && (

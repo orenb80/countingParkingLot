@@ -14,7 +14,10 @@ export function LotModal({ lot, onClose, onAdjust }: Props) {
   const [tab, setTab] = useState<"events" | "cameras" | "add-camera">("events");
 
   // Add camera form state
-  const [camForm, setCamForm] = useState({
+  const [camForm, setCamForm] = useState<{
+    name: string; ip_address: string; port: number; username: string;
+    password: string; channel: number; direction: "entry" | "exit" | "both";
+  }>({
     name: "", ip_address: "", port: 80, username: "admin",
     password: "", channel: 1, direction: "entry",
   });
@@ -166,7 +169,7 @@ export function LotModal({ lot, onClose, onAdjust }: Props) {
               ))}
               <div>
                 <label style={{ fontSize: 12, color: "#94a3b8", display: "block", marginBottom: 4 }}>Direction</label>
-                <select value={camForm.direction} onChange={(e) => setCamForm(f => ({ ...f, direction: e.target.value }))} style={{ width: "100%", padding: "8px 12px", borderRadius: 8, border: "1px solid #334155", background: "#0f172a", color: "white" }}>
+                <select value={camForm.direction} onChange={(e) => setCamForm(f => ({ ...f, direction: e.target.value as "entry" | "exit" | "both" }))} style={{ width: "100%", padding: "8px 12px", borderRadius: 8, border: "1px solid #334155", background: "#0f172a", color: "white" }}>
                   <option value="entry">Entry only</option>
                   <option value="exit">Exit only</option>
                   <option value="both">Both (camera decides)</option>

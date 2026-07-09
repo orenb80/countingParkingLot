@@ -51,7 +51,7 @@ def _stream_worker(ip: str, port: int, username: str, password: str, q: queue.Qu
     q.put(_sse("info", {"message": f"Opening stream: {stream_url}"}))
 
     try:
-        with requests.get(stream_url, auth=auth, stream=True, timeout=(8, None)) as resp:
+        with requests.get(stream_url, auth=auth, stream=True, timeout=(8, 300)) as resp:
             if resp.status_code == 401:
                 q.put(_sse("error", {"message": "Authentication failed — check username and password"}))
                 return
@@ -156,12 +156,15 @@ def camera_stream(
     def generate() -> Generator[str, None, None]:
         try:
             while True:
-                item = q.get(timeout=30)
+                try:
+                    item = q.get(timeout=120)
+                except queue.Empty:
+                    # Send a keepalive comment so the browser doesn't close the SSE connection
+                    yield ": keepalive\n\n"
+                    continue
                 if item is None:
                     break
                 yield item
-        except queue.Empty:
-            yield _sse("error", {"message": "Stream timeout — no data received for 30s"})
         finally:
             stop.set()
 

@@ -4,6 +4,23 @@ from sqlalchemy.sql import func
 from app.core.database import Base
 
 
+class SavedCamera(Base):
+    """Standalone camera registry — not tied to a parking lot yet."""
+    __tablename__ = "saved_cameras"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, nullable=False)
+    ip_address = Column(String, nullable=False)
+    port = Column(Integer, default=80)
+    username = Column(String, nullable=False, default="admin")
+    password = Column(String, nullable=False)
+    channel = Column(Integer, default=1)
+    direction = Column(String, default="entry")
+    notes = Column(String, nullable=True)
+    last_seen = Column(DateTime(timezone=True), nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+
 class ParkingLot(Base):
     __tablename__ = "parking_lots"
 

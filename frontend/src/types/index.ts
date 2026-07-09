@@ -43,6 +43,20 @@ export interface WsVehicleEvent {
   event: VehicleEvent;
 }
 
+export interface SavedCamera {
+  id: number;
+  name: string;
+  ip_address: string;
+  port: number;
+  username: string;
+  password: string;
+  channel: number;
+  direction: "entry" | "exit" | "both";
+  notes?: string;
+  last_seen?: string;
+  created_at: string;
+}
+
 export interface WsInitialState {
   type: "initial_state";
   lots: Array<{

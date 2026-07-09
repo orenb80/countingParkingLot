@@ -1,4 +1,4 @@
-import type { ParkingLot, Camera, VehicleEvent } from "../types";
+import type { ParkingLot, Camera, VehicleEvent, SavedCamera } from "../types";
 
 const BASE = "/api";
 
@@ -38,4 +38,13 @@ export const api = {
     request<void>(`/cameras/${id}`, { method: "DELETE" }),
   testCamera: (id: number) =>
     request<{ reachable: boolean }>(`/cameras/${id}/test`, { method: "POST" }),
+
+  // Saved cameras (camera registry)
+  getSavedCameras: () => request<SavedCamera[]>("/saved-cameras/"),
+  createSavedCamera: (data: Omit<SavedCamera, "id" | "created_at" | "last_seen">) =>
+    request<SavedCamera>("/saved-cameras/", { method: "POST", body: JSON.stringify(data) }),
+  updateSavedCamera: (id: number, data: Omit<SavedCamera, "id" | "created_at" | "last_seen">) =>
+    request<SavedCamera>(`/saved-cameras/${id}`, { method: "PUT", body: JSON.stringify(data) }),
+  deleteSavedCamera: (id: number) =>
+    request<void>(`/saved-cameras/${id}`, { method: "DELETE" }),
 };

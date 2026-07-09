@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from app.core.database import Base, engine
-from app.api import parking_lots, cameras, websocket, camera_test
+from app.api import parking_lots, cameras, websocket, camera_test, saved_cameras
 from app.services import parking_service
 import logging
 
@@ -38,6 +38,7 @@ app.include_router(parking_lots.router, prefix="/api")
 app.include_router(cameras.router, prefix="/api")
 app.include_router(websocket.router)
 app.include_router(camera_test.router, prefix="/api")
+app.include_router(saved_cameras.router, prefix="/api")
 
 
 @app.get("/health")
